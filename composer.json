@@ -1,0 +1,21 @@
+{
+    "name": "suifeng/applet-paylogin",
+    "description": "微信小程序、字节小程序、支付宝小程序（支付、手机号解密、获取Token、支付异步通知、退款、订单查询）",    
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "suifeng",
+            "email": "87211061@qq.com"
+        }
+    ],
+   "type": "library",
+    "require": {
+    "php": ">=5.3.3",
+    "ext-curl": "*",
+    "ext-openssl": "*"
+  },
+   "minimum-stability": "stable",
+    "autoload":{
+   	"psr-4":{"Applet\\Pay\\":"src"}
+    }
+}
