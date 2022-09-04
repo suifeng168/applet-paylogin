@@ -1,6 +1,7 @@
 ﻿### 注意事项
 微信支付使用APIv2规则 所以需要配置V2接口的密匙
 不会用就看 test 目录下的示例
+本项目基于 https://github.com/code-lives/Pays 修改而来 为了更适合自己使用 推荐大家使用原版
 # 安装说明
 
     composer require suifeng/applet-paylogin
