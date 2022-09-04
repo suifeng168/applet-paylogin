@@ -77,3 +77,17 @@ $options=[
 	'out_trade_no'=>'123',//平台订单号
 ];
 $result=Applet::getInstance('Alipay')->init($Config)->findOrder($options);
+/**
+ * 发送模板消息
+ */
+$options=[
+	'to_user_id'      =>'参数1',//接收模板消息的用户 user_id
+	'user_template_id'=>'参数2',//消息模板ID
+	'page'            =>'',//小程序的跳转页面
+	//模板参数
+	'data'            =>[
+		'thing4' =>'参数1',
+		'phrase5'=>'参数2'
+	]
+];
+$result=Applet::getInstance('Alipay')->init($Config)->sendMessage($options);

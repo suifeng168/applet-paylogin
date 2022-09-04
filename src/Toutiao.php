@@ -154,6 +154,27 @@ class Toutiao{
 		return $result;
 	}
 	/**
+	 * 发送模板消息
+	 * @param $token 小程序 access_token
+	 * @param $tpl_id 模板的 id
+	 * @param $open_id 接收消息目标用户的 open_id
+	 * @param array $send_data 模板内容
+	 * @param string $page 跳转的页面
+	 * @return mixed
+	 */
+	public function sendMessage($token,$tpl_id,$open_id,$send_data=[],$page=''){
+		$template=[
+			'access_token'      =>$token,
+			'app_id'           =>$this->app_id,
+			'tpl_id'             =>$tpl_id,
+			'open_id'=>$open_id,
+			'data'             =>$send_data,
+			'page'             =>$page
+		];
+		$result=json_decode($this->curl_post('https://developer.toutiao.com/api/apps/subscribe_notification/developer/v1/notify',$template),true);
+		return $result;
+	}
+	/**
 	 * 解密手机号
 	 * @param string $session_key 前端传递的session_key
 	 * @param string $iv 前端传递的iv

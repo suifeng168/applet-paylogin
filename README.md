@@ -2,15 +2,16 @@
 微信支付使用APIv2规则 所以需要配置V2接口的密匙
 不会用就看 test 目录下的示例
 本项目只要是为自己服务 其他人用请自行看文档摸索
+支付宝是订阅消息 不是订单消息等
 # 安装说明
 
     composer require suifeng/applet-paylogin
 # 功能支持
-| 第三方    | token | openid | 支付  | 回调  | 退款  | 订单查询 | 解密手机号 |
-|:------:|:-----:|:------:|:---:|:---:|:---:|:----:|:-----:|
-| 微信小程序  | ✓     | ✓      | ✓   | ✓   | ✓   | ✓    | ✓     |
-| 支付宝小程序 | x    | ✓      | ✓   | ✓   | ✓   | ✓    | ✓     |
-| 字节小程序  | ✓     | ✓      | ✓   | ✓   | ✓   | ✓    | ✓     |
+| 第三方    | token | openid | 支付  | 回调  | 退款  | 订单查询 | 解密手机号 |订阅消息 |
+|:------:|:-----:|:------:|:---:|:---:|:---:|:----:|:-----:|:-----:|
+| 微信小程序  | ✓     | ✓      | ✓   | ✓   | ✓   | ✓    | ✓     |✓     |
+| 支付宝小程序 | x    | ✓      | ✓   | ✓   | ✓   | ✓    | ✓     |✓     |
+| 字节小程序  | ✓     | ✓      | ✓   | ✓   | ✓   | ✓    | ✓     |✓     |
 
 # 字节小程序
 
@@ -36,7 +37,7 @@
     $code="";//小程序传递过来的
     $data= \Applet\Pay\Factory::getInstance('Toutiao')->init($config)->getOpenid($code);
 ```
-###预下单
+### 预下单
 ```php
     $options=[
     'out_order_no'=>1,
@@ -72,7 +73,7 @@
     
 ```
 文档地址：https://microapp.bytedance.com/docs/zh-CN/mini-app/develop/server/ecpay/APIlist/refund-list/refund
-###异步通知
+### 异步通知
 ```php
    $result=\Applet\Pay\Factory::getInstance('Toutiao')->init($Config)->verify();
     $msg=$result['msg'];
@@ -91,6 +92,20 @@
 ```
 文档地址：https://microapp.bytedance.com/docs/zh-CN/mini-app/develop/server/ecpay/APIlist/pay-list/callback  
 这里如果有退款 记得要判断下 支付回调和退款回调
+### 订阅消息
+```php
+$token=''; //接口调用凭证access_token
+$tpl_id=''; //所需下发的订阅模板id
+$open_id=''; //接收者（用户）的 openid
+$page='/page/index/index'; //点击模板卡片后的跳转页面
+//模板内容 数组
+$send_data=[
+	'thing4' =>'参数1',
+	'phrase5'=>'参数2'
+];
+$result=Applet::getInstance('Toutiao')->init($Config)->sendMessage($token,$tpl_id,$open_id,$send_data,$page);  
+    
+```
 # 微信小程序
 
 ### Config
@@ -119,7 +134,7 @@
     
 ```
 
-###预下单
+### 预下单
 ```php
     $options=[]; 
     $pay= \Applet\Pay\Factory::getInstance('Weixin')->init($config)->set($options);
@@ -155,7 +170,7 @@
   
 ```
 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
-###异步通知
+### 异步通知
 ```php
    $result=\Applet\Pay\Factory::getInstance('Weixin')->init($Config)->verify();
  if($result['result_code']=='SUCCESS'&&$result['return_code']=='SUCCESS'){
@@ -168,6 +183,20 @@
     
 ```
 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7&index=8
+### 订阅消息
+```php
+$token=''; //接口调用凭证access_token
+$template_id=''; //所需下发的订阅模板id
+$touser=''; //接收者（用户）的 openid
+$url='/page/index/index'; //点击模板卡片后的跳转页面
+//模板内容 数组
+$send_data=[
+	'thing4' =>'参数1',
+	'phrase5'=>'参数2'
+];
+$result=Applet::getInstance('Weixin')->init($Config)->sendMessage($token,$template_id,$touser,$url,$send_data);   
+    
+```
 # 支付宝小程序
 
 ### Config
@@ -195,7 +224,7 @@
     $code='';
     $data= \Applet\Pay\Factory::getInstance('Alipay')->init($config)->decryptPhone($code);
 ```
-###预下单
+### 预下单
 ```php
     $options=[
 		'out_trade_no'=>1,// 订单号
@@ -220,7 +249,8 @@
     $data= \Applet\Pay\Factory::getInstance('Alipay')->init($config)->applyOrderRefund($options);
 ```
 文档地址：https://opendocs.alipay.com/open/02ekfk
-###异步通知
+
+### 异步通知
 ```php
        
 		
@@ -232,6 +262,23 @@
     
 ```
 文档地址：https://opendocs.alipay.com/open/194/103296
-
+### 订阅消息
+```php
+       
+$options=[
+	'to_user_id' =>'参数1',//接收模板消息的用户 user_id
+	'user_template_id'=>'参数2',//消息模板ID
+	'page'=>'',//小程序的跳转页面
+	//模板参数
+	'data'=>[
+		'thing4' =>'参数1',
+		'phrase5'=>'参数2'
+	]
+];
+$result=Applet::getInstance('Alipay')->init($Config)->sendMessage($options);
+    
+    
+```
+文档地址：https://opendocs.alipay.com/mini/02cth2
 
  

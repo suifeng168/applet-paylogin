@@ -124,6 +124,26 @@ class Alipay{
 		return json_decode($result,true);
 	}
 	/**
+	 * 发送模板消息
+	 */
+	public function sendMessage($options){
+		$config=[
+			//公共参数
+			'app_id'     =>$this->appid,
+			'method'     =>'alipay.open.app.mini.templatemessage.send',//接口名称
+			'format'     =>'JSON',
+			'charset'    =>'UTF-8',
+			'sign_type'  =>'RSA2',
+			'timestamp'  =>date('Y-m-d H:i:s'),
+			'version'    =>'1.0',
+			'biz_content'=>json_encode($options),
+		];
+		$config["sign"]=$this->generateSign($config,$config['sign_type']);
+		$result=$this->curlPost($this->gatewayUrl,$config);
+		$result=iconv('GBK','UTF-8',$result);
+		return json_decode($result,true);
+	}
+	/**
 	 * 解密手机号
 	 * @param string $encryptedData 前端传递的encryptedData
 	 */

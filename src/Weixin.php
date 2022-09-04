@@ -1,7 +1,6 @@
 <?php
 namespace Applet\Pay;
 class Weixin{
-
 	private $appid;
 	private $secret;
 	private $mch_id;
@@ -11,7 +10,6 @@ class Weixin{
 	private $cert_pem;
 	private $openid;
 	private $codedUrl='https://api.weixin.qq.com/sns/jscode2session?';//openid
-
 	private $tokenUrl='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=';
 	protected $payUrl='https://api.mch.weixin.qq.com/pay/unifiedorder'; //支付
 	protected $query='https://api.mch.weixin.qq.com/pay/orderquery'; //查询
@@ -52,8 +50,6 @@ class Weixin{
 		}
 		return $str;
 	}
-
-
 	/**
 	 * 预下单
 	 * @param $options
@@ -73,18 +69,17 @@ class Weixin{
 		if($prepay_id['return_code']=='SUCCESS'){
 			$result=[
 				'return_code'=>'SUCCESS',
-				'appId'    =>$this->appid, //小程序ID
-				'timeStamp'=>''.time().'', //时间戳
-				'nonceStr' =>$this->create_nonce_str(), //随机串
-				'package'  =>'prepay_id='.$prepay_id['prepay_id'], //数据包
-				'signType' =>'MD5', //签名方式
+				'appId'      =>$this->appid, //小程序ID
+				'timeStamp'  =>''.time().'', //时间戳
+				'nonceStr'   =>$this->create_nonce_str(), //随机串
+				'package'    =>'prepay_id='.$prepay_id['prepay_id'], //数据包
+				'signType'   =>'MD5', //签名方式
 			];
 			$result['paySign']=$this->sign($result);
 			return $result;
 		}
 		return $prepay_id;
 	}
-
 	/**
 	 *    作用：将xml转为array
 	 */
@@ -154,7 +149,6 @@ class Weixin{
 		$result=json_decode($this->curl_get($url),true);
 		return $result;
 	}
-
 	/**
 	 * 异步回调
 	 * @param array $order 回调数据
@@ -208,6 +202,27 @@ class Weixin{
 		$data=$this->curl_post_ssl($this->query,$xml_data);
 		$xml_data=$this->xmlToArray($data);
 		return $xml_data;
+	}
+	/**
+	 * 发送模板消息
+	 * @param $token 接口调用凭证access_token
+	 * @param $template_id 所需下发的订阅模板id
+	 * @param $touser 接收者（用户）的 openid
+	 * @param string $url 点击模板卡片后的跳转页面
+	 * @param $send_data 模板内容
+	 * @return bool|string
+	 */
+	public function sendMessage($token,$template_id,$touser,$url='',$send_data=[]){
+		$template=[
+			'template_id'      =>$template_id,
+			'touser'           =>$touser,
+			'page'             =>$url,
+			'miniprogram_state'=>'formal',
+			'data'             =>$send_data,
+			'lang'             =>'zh_CN'
+		];
+		$result=$this->http_curl("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=$token",$template,'json');
+		return $result;
 	}
 	protected static function curl_get($url){
 		$headerArr=["Content-type:application/x-www-form-urlencoded"];
@@ -296,5 +311,36 @@ class Weixin{
 			return false;
 		}
 		return json_decode($result,true);
+	}
+	/**
+	 * 模板消息发送
+	 */
+	public function http_curl($url='',$data=[],$type=''){
+		$headers='';
+		if($type=='json'){
+			$headers=[
+				"Content-Type:application/json;charset=UTF-8",
+				"Accept: application/json",
+				"Cache-Control: no-cache",
+				"Pragma: no-cache"
+			];
+			$data=json_encode($data);
+		}
+		$curl=curl_init();
+		curl_setopt($curl,CURLOPT_URL,$url);
+		curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,false);
+		curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,false);
+		if(!empty($data)){
+			curl_setopt($curl,CURLOPT_POST,1);
+			curl_setopt($curl,CURLOPT_POSTFIELDS,$data);
+		}
+		curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+		$headers&&curl_setopt($curl,CURLOPT_HTTPHEADER,$headers);
+		$output=curl_exec($curl);
+		if(curl_errno($curl)){
+			echo 'Errno'.curl_error($curl);
+		}
+		curl_close($curl);
+		return $output;
 	}
 }

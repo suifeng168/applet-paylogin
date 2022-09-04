@@ -83,3 +83,22 @@ $result=Applet::getInstance('Toutiao')->init($Config)->applyOrderRefund($options
  * 订单查询
  */
 $result=Applet::getInstance('Toutiao')->init($Config)->findOrder('订单号');
+/**
+ * 发送模板消息
+ * @param $token 小程序 access_token
+ * @param $tpl_id 模板的 id
+ * @param $open_id 接收消息目标用户的 open_id
+ * @param array $send_data 模板内容
+ * @param string $page 跳转的页面
+ * @return mixed
+ */
+$token=''; //接口调用凭证access_token
+$tpl_id=''; //所需下发的订阅模板id
+$open_id=''; //接收者（用户）的 openid
+$page='/page/index/index'; //点击模板卡片后的跳转页面
+//模板内容 数组
+$send_data=[
+	'thing4' =>'参数1',
+	'phrase5'=>'参数2'
+];
+$result=Applet::getInstance('Toutiao')->init($Config)->sendMessage($token,$tpl_id,$open_id,$send_data,$page);
