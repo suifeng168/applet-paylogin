@@ -6,6 +6,7 @@ class Alipay{
 	private $alipayrsaPublicKey;//请填写支付宝公钥，一行字符串
 	private $screct_key;//解密敏感信息的AES密钥 例如手机号
 	private $notify_url;
+	private $debug=false;
 	private $gatewayUrl='https://openapi.alipay.com/gateway.do';
 	public static function init($config){
 		if(!isset($config['appid'])||empty($config['appid'])){
